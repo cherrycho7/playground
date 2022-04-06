@@ -6,37 +6,13 @@ import TodoHeader from "./components/TodoHeader";
 import TodoButton from "./components/TodoButton";
 import TodoList from "./components/TodoList";
 
-const colorBlue = 'blue';
-
 function App() {
   const [ value, setValue ] = useState('');
-  const [ btn, setBtn ] = useState(true);
-  const [ todos, setTodos ] = useState([
-    {
-      uuid: 0,
-      text: '해야할 일 01',
-      isCompleted: true,
-      isDeleted: false
-    },
-    {
-      uuid: 1,
-      text: '할야할 일 02',
-      isCompleted: false,
-      isDeleted: true
-    }
-  ]);
-
-  const [ count, setCount ] = useState(2);
+  const [ todos, setTodos ] = useState([]);
+  const [ count, setCount ] = useState(0);
 
   const onChangeHandler = event => {
-    console.log(event.target.value);
     setValue(event.target.value);
-
-    if( event.target.value !== '' ) {
-      setBtn(false);
-    } else {
-      setBtn(true);
-    }
   }
 
   const onClickHandler = (event) => {  // 인자가 하나일떄는 () 를 생각해도돼
@@ -45,7 +21,6 @@ function App() {
       alert('공백놉');
       return;
     }
-
     setTodos( prev => {   // prev 로 기존의 데이터를 가져와
       return [
         {
@@ -57,7 +32,6 @@ function App() {
         ...prev,
       ]
     });
-
     setCount(prev => prev + 1);
     setValue('');
   }
@@ -68,6 +42,20 @@ function App() {
     }
   }
 
+  const onCompleted = id => {
+    const result = todos.map( todos => {
+      return todos.uuid == id ? { ...todos, isCompleted: !todos.isCompleted} : { ...todos};
+    })
+    setTodos(result);
+  }
+
+  const onDeleted = id => {
+    const result = todos.map( todos => {
+      return todos.uuid == id ? { ...todos, isDeleted: !todos.isDeleted} : { ...todos};
+    })
+    setTodos(result);
+  }
+
   return (
     <AppStyle className="App">
       <div className="wrapper">
@@ -75,9 +63,9 @@ function App() {
           <TodoHeader/>
           <div className="inpArea">
             <TodoInput value={value} onChangeHandler={onChangeHandler} onKeyPress={onKeyPress}/>
-            <TodoButton disabled={btn} onClickHandler={onClickHandler}>추가하기</TodoButton>
+            <TodoButton disabled={value.trim() ===''} onClickHandler={onClickHandler}>추가하기</TodoButton>
           </div>
-          <TodoList todos={todos}/>
+          <TodoList todos={todos} onCompleted={onCompleted} onDeleted={onDeleted}/>
         </div>
       </div>
     </AppStyle>

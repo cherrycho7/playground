@@ -1,12 +1,12 @@
 import styled from "styled-components";
 import TodoItem from "../TodoItem";
 
-const TodoList = ({todos}) => {
+const TodoList = ({todos, onCompleted, onDeleted}) => {
   return <Style>
     {
       todos.map((todo) => {
         return (
-            <TodoItem todo={todo} key={todo.uuid}/>
+            <TodoItem todo={todo} key={todo.uuid} onCompleted={onCompleted} onDeleted={onDeleted}/>
         )
       })
     }

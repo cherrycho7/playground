@@ -1,19 +1,24 @@
 import styled from "styled-components";
 
-const TodoItem = ({todo}) => {
+const TodoItem = ({todo, onCompleted, onDeleted}) => {
 
-  return <Style>
-    <div className={'left ' + (todo.isDeleted ? 'del' : '')}>
-      <div className='check'>
-        { todo.isCompleted && <div className="circle"></div> }
+  const { uuid, text, isCompleted, isDeleted } = todo
+  const completedClick = (e) => {
+    onCompleted(e.currentTarget.id);
+  }
+  const deletedClick = (e) => {
+    onDeleted(e.currentTarget.id);
+  }
+
+  return <Style isCompleted={isCompleted} isDeleted={isDeleted}>
+    <div className="left">
+      <div className='check' id={ uuid } onClick={completedClick}>
+        <div className="circle">{isCompleted ? '완료' : '미완료'}</div>
       </div>
-      <div className={ todo.isCompleted ? 'fin text' : 'text' }>
-        { todo.text }
-      </div>
+      <div className="text">{ text }</div>
     </div>
-    <div className="right">
-      <div className="btnDelete" hidden={todo.isDeleted}>삭제</div>
-      <div className={'btnRestore ' + (todo.isDeleted ? 'btnRestore' : '')} hidden={!todo.isDeleted}>복구</div>
+    <div className="right" id={ uuid } onClick={deletedClick}>
+      <div className={isDeleted ? 'btnRestore' : 'btnDelete'}>{isDeleted ? '복구' : '삭제'}</div>
     </div>
   </Style>
 }
@@ -36,9 +41,10 @@ const Style = styled.div`
       width: 20px;
       height: 20px;
       border-radius: 10px;
-      border: 1px solid #ddd;
+      border: ${({isDeleted}) => isDeleted ? 'none' : '1px solid #ddd'};
       
       .circle {
+        display: ${({isCompleted, isDeleted}) => (isCompleted && !isDeleted) ? 'block' : 'none'};
         position: absolute;
         top: 2px;
         left: 2px;
@@ -46,28 +52,15 @@ const Style = styled.div`
         height: 14px;
         border-radius: 7px;
         background-color: #426EFF;
+        text-indent: -9999px;
       }
     }
     
     .text {
       font-size: 16px;
-      color: #000;
-      &.fin {
-        color: rgba(0,0,0,0.4);
-      }
+      color: ${({isCompleted, isDeleted}) => (isCompleted || isDeleted) ? 'rgba(0,0,0,0.4)' : '#000'};
+      text-decoration: ${({isDeleted}) => isDeleted ? 'line-through' : 'none'};
     }
-    
-    &.del {
-      .check {
-        border: none;
-      }
-      
-      .text {
-        color: rgba(0,0,0,0.4);
-        text-decoration: line-through;
-      }
-    }
-    
   }
   
   .right {
