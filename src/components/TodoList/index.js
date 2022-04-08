@@ -6,7 +6,7 @@ const TodoList = ({todos, onCompleted, onDeleted}) => {
     {
       todos.map((todo) => {
         return (
-            <TodoItem todo={todo} key={todo.uuid} onCompleted={onCompleted} onDeleted={onDeleted}/>
+            <TodoItem todo={todo} key={todo._id} onCompleted={onCompleted} onDeleted={onDeleted}/>
         )
       })
     }

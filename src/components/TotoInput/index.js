@@ -1,8 +1,8 @@
 import styled from "styled-components";
 
-const TodoInput = ({value, onChangeHandler, onKeyPress}) => {
+const TodoInput = ({value, onChangeHandler, onKeyPress, placeholder}) => {
   return <Style>
-    <input type="text" value={value} onChange={onChangeHandler} onKeyPress={onKeyPress} placeholder="할 일을 입력하세요"/>
+    <input type="text" value={value} onChange={onChangeHandler} onKeyPress={onKeyPress} placeholder={placeholder}/>
   </Style>
 }
 

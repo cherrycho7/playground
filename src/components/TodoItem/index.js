@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 const TodoItem = ({todo, onCompleted, onDeleted}) => {
 
-  const { uuid, text, isCompleted, isDeleted } = todo
+  const { _id, description, completed, isDeleted } = todo
   const completedClick = (e) => {
     onCompleted(e.currentTarget.id);
   }
@@ -10,14 +10,14 @@ const TodoItem = ({todo, onCompleted, onDeleted}) => {
     onDeleted(e.currentTarget.id);
   }
 
-  return <Style isCompleted={isCompleted} isDeleted={isDeleted}>
+  return <Style isCompleted={completed} isDeleted={isDeleted}>
     <div className="left">
-      <div className='check' id={ uuid } onClick={completedClick}>
-        <div className="circle">{isCompleted ? '완료' : '미완료'}</div>
+      <div className='check' id={ _id } onClick={completedClick}>
+        <div className="circle">{completed ? '완료' : '미완료'}</div>
       </div>
-      <div className="text">{ text }</div>
+      <div className="text">{ description }</div>
     </div>
-    <div className="right" id={ uuid } onClick={deletedClick}>
+    <div className="right" id={ _id } onClick={deletedClick}>
       <div className={isDeleted ? 'btnRestore' : 'btnDelete'}>{isDeleted ? '복구' : '삭제'}</div>
     </div>
   </Style>
