@@ -71,10 +71,10 @@ function App() {
   }
 
   const onDeleted = id => {
-    const result = todos.map( todos => {
-      return todos._id == id ? { ...todos, isDeleted: !todos.isDeleted} : { ...todos};
-    })
+    service.task.deleteTask({id})
+    const result = todos.filter(todo => todo._id != id);
     setTodos(result);
+    console.log('deleted')
   }
 
   const signupHandler = async () => {

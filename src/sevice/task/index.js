@@ -23,9 +23,18 @@ const task = {
     return result.data
   },
   completeTask: async ({ id, completed}) => {
-    const result = await axios.put('https://api-nodejs-todolist.herokuapp.com/task/${id}', {
+    const result = await axios.put(`https://api-nodejs-todolist.herokuapp.com/task/${id}`, {
       completed: completed
     }, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: getToken()
+      }
+    })
+    return result.data
+  },
+  deleteTask: async  ({ id }) => {
+    const result = await axios.delete(`https://api-nodejs-todolist.herokuapp.com/task/${id}`, {
       headers: {
         "Content-Type": "application/json",
         Authorization: getToken()
