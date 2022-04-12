@@ -1,5 +1,5 @@
 import axios from "axios";
-import {setToken} from "../../utils";
+import {getToken, setToken} from "../../utils";
 
 const user = {
   // signup: async (params) => { // async 비동기함수다!
@@ -19,14 +19,37 @@ const user = {
   },
 
   login: async ({ email, password }) => {
-    const result = await axios.post('https://api-nodejs-todolist.herokuapp.com/user/login', {
-      email, password
-    }, {
+    try {
+      const result = await axios.post('https://api-nodejs-todolist.herokuapp.com/user/login', {
+        email, password
+      }, {
+        headers: {
+          "Content-Type": "application/json"
+        }
+      })
+      setToken(result.data.token)
+      return result;
+    } catch (e) {
+      alert('아이디, 비밀번호를 확인해주세요');
+      console.log(e);
+    }
+  },
+
+  logout: async () => {
+    const result = await axios.post('https://api-nodejs-todolist.herokuapp.com/user/logout', {}, {
       headers: {
-        "Content-Type": "application/json"
+        Authorization: getToken()
       }
     })
-    setToken(result.data.token)
+    return result;
+  },
+
+  autoLogin: async () => {
+    const result = await axios.get('https://api-nodejs-todolist.herokuapp.com/user/me', {
+      headers: {
+        Authorization: getToken()
+      }
+    })
     return result;
   }
 }

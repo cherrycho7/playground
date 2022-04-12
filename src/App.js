@@ -2,10 +2,11 @@ import {useEffect, useState} from "react";
 import styled from "styled-components";
 import service from "./sevice";
 import './index.css'
-import TodoInput from "./components/TotoInput";
+import TodoInput from "./components/TodoInput";
 import TodoHeader from "./components/TodoHeader";
 import TodoButton from "./components/TodoButton";
 import TodoList from "./components/TodoList";
+import TodoLogout from "./components/TodoLogout";
 
 function App() {
   const [ value, setValue ] = useState('');
@@ -54,6 +55,7 @@ function App() {
         ...prev,
       { ...result.data }
     ]);
+    setValue('');
   }
 
   const onKeyPress = (e) => {
@@ -79,22 +81,39 @@ function App() {
 
   const signupHandler = async () => {
     const result = await service.user.signup({ name, email, password, age })
-    console.log(result)
+    console.log('signupHandler : ', result)
   }
 
   const loginHandler = async () => {
     const result = await service.user.login({email: email2, password: password2})
     setUser(result)
-    console.log(result)
+    console.log('loginHandler :', result)
+  }
+
+  const logoutHandler = async () => {
+    const result = await service.user.logout()
+    setUser(null);
+    console.log('logoutHandler : ', result);
   }
 
   const fetchAllTasks = async () => {
     const tasks = await service.task.fetchAllTasks()
-    console.log(tasks)
     setTodos(tasks.data)
+    console.log(tasks)
+  }
+
+  const getLoginUser = async () => {
+    try {
+      const result = await service.user.autoLogin()
+      result ? setUser(result) : setUser(null);
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   useEffect(() => {
+    getLoginUser();
+
     if (isLogin) {
       fetchAllTasks();
     }
@@ -102,6 +121,7 @@ function App() {
 
   return (
     <AppStyle className="App">
+      <div className="test" onClick={getLoginUser}>get login user info</div>
       {
         isLogin ? <div className="wrapper">
               <div className="inner">
@@ -112,35 +132,42 @@ function App() {
                   <TodoButton disabled={value.trim() ===''} onClickHandler={onClickHandler}>추가하기</TodoButton>
                 </div>
                 <TodoList todos={todos} onCompleted={onCompleted} onDeleted={onDeleted}/>
+                <TodoLogout logoutHandler={logoutHandler}/>
               </div>
-            </div> : <div className="signup">
-          <TodoInput value={name}
-                     onChangeHandler={e => {setName(e.target.value)}}
-                     placeholder="이름을 입력해주세요"
-          />
-          <TodoInput value={email}
-                     onChangeHandler={e => {setEmail(e.target.value)}}
-                     placeholder="이메일을 입력해주세요"
-          />
-          <TodoInput value={password}
-                     onChangeHandler={e => {setPassword(e.target.value)}}
-                     placeholder="패스워드를 입력해주세요"
-          />
-          <TodoInput value={age}
-                     onChangeHandler={e => {setAge(e.target.value)}}
-                     placeholder="나이를 입력해주세요"
-          />
-          <TodoButton onClickHandler={signupHandler}>회원가입</TodoButton>
-
-          <TodoInput value={email2}
-                     onChangeHandler={e => {setEmail2(e.target.value)}}
-                     placeholder="이메일을 입력해주세요"
-          />
-          <TodoInput value={password2}
-                     onChangeHandler={e => {setPassword2(e.target.value)}}
-                     placeholder="패스워드를 입력해주세요"
-          />
-          <TodoButton onClickHandler={loginHandler}>로그인</TodoButton>
+            </div> : <div className="signup inner">
+          <div className="join">
+            <TodoInput value={name}
+                       onChangeHandler={e => {setName(e.target.value)}}
+                       placeholder="ID"
+            />
+            <TodoInput value={email}
+                       onChangeHandler={e => {setEmail(e.target.value)}}
+                       placeholder="Email"
+                       type="email"
+            />
+            <TodoInput value={password}
+                       onChangeHandler={e => {setPassword(e.target.value)}}
+                       placeholder="Password"
+            />
+            <TodoInput value={age}
+                       onChangeHandler={e => {setAge(e.target.value)}}
+                       placeholder="Age"
+            />
+            <TodoButton onClickHandler={signupHandler}>회원가입</TodoButton>
+          </div>
+          <div className="login">
+            <TodoInput value={email2}
+                       onChangeHandler={e => {setEmail2(e.target.value)}}
+                       placeholder="emil@google.com"
+                       tyep="email"
+            />
+            <TodoInput value={password2}
+                       onChangeHandler={e => {setPassword2(e.target.value)}}
+                       type="password"
+                       placeholder="Password"
+            />
+            <TodoButton onClickHandler={loginHandler}>로그인</TodoButton>
+          </div>
         </div>
       }
 
@@ -152,7 +179,11 @@ const AppStyle = styled.div`
   display: flex;
   justify-content: center;
   height: 100vh;
-  background-color: #b1d1ce;
+  background-color: #fff;
+  
+  button {
+    cursor: pointer;
+  }
   
   .wrapper {
     margin: 0 auto;
@@ -171,8 +202,18 @@ const AppStyle = styled.div`
         height: 40px;
       }
     }
+  }
+
+  .signup {
+    margin: 20px 0;
     
-    .signup {
+    input {
+      margin-top: 5px;
+    }
+    button {
+      margin: 10px 0 30px;
+      width: 100%;
+      height: 35px;
     }
   }
 `
